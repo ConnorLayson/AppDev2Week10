@@ -1,48 +1,5 @@
-import { useState, useEffect } from 'react';
-import ArticleCard from '../components/ArticleCard';
-import { fetchTopStories } from '../services/api';
-
-function HomePage() {
-  const [articles, setArticles] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const loadTopStories = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchTopStories();
-        setArticles(data);
-        setError(null);
-      } catch (err) {
-        setError('Failed to load articles. Please check your API key and try again.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadTopStories();
-  }, []);
-
-  if (loading) {
-    return <div className="loading">Loading top stories...</div>;
-  }
-
-  if (error) {
-    return <div className="message error">{error}</div>;
-  }
-
-  return (
-    <div>
-      <h2 className="page-heading">Top Stories</h2>
-      <div className="articles-grid">
-        {articles.map((article, index) => (
-          <ArticleCard key={index} article={article} />
-        ))}
-      </div>
-    </div>
-  );
-};
-
-export default HomePage;
+import{useEffect,useState}from'react';import ArticleCard from'../components/ArticleCard';
+const fallback=[{id:'demo-1',title:'Welcome to NewsReader',description:'Add your NY Times API key to load live Top Stories. You can save this demo article after signing in.',url:'https://www.nytimes.com/',section:'Technology'},{id:'demo-2',title:'Explore the latest headlines',description:'NewsReader lets each account keep its own reading list.',url:'https://www.nytimes.com/',section:'World'}];
+export default function HomePage(){const[articles,setArticles]=useState(fallback),[loading,setLoading]=useState(false),[error,setError]=useState('');
+useEffect(()=>{const key=import.meta.env.VITE_NY_TIMES_API_KEY;if(!key||key==='YOUR_API_KEY_HERE')return;setLoading(true);fetch(`https://api.nytimes.com/svc/topstories/v2/home.json?api-key=${key}`).then(r=>{if(!r.ok)throw Error('NY Times request failed');return r.json()}).then(d=>setArticles((d.results||[]).map((a,i)=>({id:a.uri||String(i),title:a.title,description:a.abstract,url:a.url,section:a.section,byline:a.byline})))).catch(()=>setError('Could not load live stories; showing demo content.')).finally(()=>setLoading(false));},[]);
+return <main><div className="hero"><h1>Top Stories</h1><p>Stay curious. Save stories worth reading.</p></div>{loading&&<p>Loading stories…</p>}{error&&<p className="muted">{error}</p>}{articles.map(a=><ArticleCard key={a.id} article={a}/>)}</main>}

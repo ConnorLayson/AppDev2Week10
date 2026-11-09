@@ -1,24 +1,2 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { ArticlesProvider } from './context/ArticlesContext';
-import Layout from './components/Layout';
-import HomePage from './pages/HomePage';
-import SearchPage from './pages/SearchPage';
-import SavedArticlesPage from './pages/SavedArticlesPage';
-
-function App() {
-  return (
-    <ArticlesProvider>
-      <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/search" element={<SearchPage />} />
-            <Route path="/saved" element={<SavedArticlesPage />} />
-          </Routes>
-        </Layout>
-      </BrowserRouter>
-    </ArticlesProvider>
-  );
-}
-
-export default App;
+import{Routes,Route}from'react-router-dom';import Navigation from'./components/Navigation';import ProtectedRoute from'./components/ProtectedRoute';import Login from'./components/Login';import HomePage from'./pages/HomePage';import SavedArticlesPage from'./pages/SavedArticlesPage';import AdminPage from'./pages/AdminPage';
+export default function App(){return <><Navigation/><Routes><Route path="/" element={<HomePage/>}/><Route path="/login" element={<Login/>}/><Route path="/saved" element={<ProtectedRoute><SavedArticlesPage/></ProtectedRoute>}/><Route path="/admin" element={<ProtectedRoute adminOnly><AdminPage/></ProtectedRoute>}/><Route path="*" element={<main><h1>Page not found</h1></main>}/></Routes><footer>NewsReader · React demo</footer></>}
